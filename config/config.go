@@ -25,9 +25,9 @@ const (
 	SettingListenDefault = ":8080"
 
 	// SettingElasticsearchAddreessees is the config key for the elasticsearch addresses
-	SettingElasticsearchAddreessees = "listen"
+	SettingElasticsearchAddresses = "addresses"
 	// SettingListenDefault is the default value for the elasticsearch addresses
-	SettingElasticsearchAddreesseesDefault = "localhost:9200"
+	SettingElasticsearchAddressesDefault = "http://localhost:9200"
 
 	// SettingDebugLog is the config key for the truning on the debug log
 	SettingDebugLog = "debug_log"
@@ -39,7 +39,7 @@ var (
 	// Defaults are the default configuration settings
 	Defaults = []config.Default{
 		{Key: SettingListen, Value: SettingListenDefault},
-		{Key: SettingElasticsearchAddreessees, Value: SettingElasticsearchAddreesseesDefault},
+		{Key: SettingElasticsearchAddresses, Value: SettingElasticsearchAddressesDefault},
 		{Key: SettingDebugLog, Value: SettingDebugLogDefault},
 	}
 )
