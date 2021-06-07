@@ -15,6 +15,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"os"
@@ -50,6 +51,12 @@ func doMain(args []string) {
 				Name:   "server",
 				Usage:  "Run the HTTP API server",
 				Action: cmdServer,
+				Flags: []cli.Flag{
+					&cli.BoolFlag{
+						Name:  "automigrate",
+						Usage: "Run database migrations before starting.",
+					},
+				},
 			},
 			{
 				Name:   "indexer",
@@ -61,7 +68,16 @@ func doMain(args []string) {
 						Usage: "Number of devices to index",
 						Value: 1000,
 					},
+					&cli.BoolFlag{
+						Name:  "automigrate",
+						Usage: "Run database migrations before starting.",
+					},
 				},
+			},
+			{
+				Name:   "migrate",
+				Usage:  "Run the migrations",
+				Action: cmdMigrate,
 			},
 		},
 	}
@@ -96,6 +112,13 @@ func cmdServer(args *cli.Context) error {
 	if err != nil {
 		return err
 	}
+	if args.Bool("automigrate") {
+		ctx := context.Background()
+		err := esClient.Migrate(ctx)
+		if err != nil {
+			return err
+		}
+	}
 	return server.InitAndRun(config.Config, esClient)
 }
 
@@ -104,8 +127,24 @@ func cmdIndexer(args *cli.Context) error {
 	if err != nil {
 		return err
 	}
+	if args.Bool("automigrate") {
+		ctx := context.Background()
+		err := esClient.Migrate(ctx)
+		if err != nil {
+			return err
+		}
+	}
 	devices := args.Int64("devices")
 	return indexer.InitAndRun(config.Config, esClient, devices)
+}
+
+func cmdMigrate(args *cli.Context) error {
+	esClient, err := getElasticsearchClient(args)
+	if err != nil {
+		return err
+	}
+	ctx := context.Background()
+	return esClient.Migrate(ctx)
 }
 
 func getElasticsearchClient(args *cli.Context) (elasticsearch.Client, error) {
