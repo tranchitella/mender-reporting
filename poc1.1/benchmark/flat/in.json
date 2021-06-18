@@ -1,0 +1,13 @@
+{
+    "query": {
+        "bool": {
+            "must": [
+                {
+                    "terms": {
+                        "inventory_network_interfaces": ["bcm0", "usb0"]
+                    }
+                }
+            ]
+        }
+    }
+}

@@ -1,0 +1,13 @@
+{
+    "query": {
+        "bool": {
+            "must": [
+                {
+                    "regexp": {
+                        "inventory_artifact_name": "system-M.*"
+                    }
+                }
+            ]
+        }
+    }
+}

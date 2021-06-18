@@ -1,0 +1,22 @@
+{
+    "from": 20,
+    "query": {
+        "bool": {
+            "must": [
+                {
+                    "match": {
+                        "inventory_hostname_str": "Ambarella"
+                    }
+                }
+            ]
+        }
+    },
+    "sort": [
+        {
+            "identity_serial_no_str": {"unmapped_type": "string", "order":"asc"}
+        },
+        {
+            "identity_serial_no_num": {"unmapped_type": "double", "order": "asc"}
+        }
+    ]
+}

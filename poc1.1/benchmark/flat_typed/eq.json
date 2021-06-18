@@ -1,0 +1,13 @@
+{
+    "query": {
+        "bool": {
+            "must": [
+                {
+                    "match": {
+                        "inventory_hostname_str": "Ambarella"
+                    }
+                }
+            ]
+        }
+    }
+}

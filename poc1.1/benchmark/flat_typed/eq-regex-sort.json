@@ -1,0 +1,25 @@
+{
+    "query": {
+        "bool": {
+            "must": [
+                {
+                    "match": {
+                        "inventory_hostname_str": "Ambarella"
+                    }
+                },
+                {
+                    "regexp": {
+                        "inventory_artifact_name_str": "system-M.*"
+                    }
+                }
+            ]
+        }
+    },
+    "size": 20,
+    "sort": [
+        {
+            "identity_serial_no_str": {"unmapped_type": "string"},
+            "identity_serial_no_num": {"unmapped_type": "double"}
+        }
+    ]
+}

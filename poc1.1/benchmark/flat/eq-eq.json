@@ -1,0 +1,18 @@
+{
+    "query": {
+        "bool": {
+            "must": [
+                {
+                    "match": {
+                        "inventory_hostname": "Ambarella"
+                    }
+                },
+                {
+                    "match": {
+                        "inventory_artifact_name": "system-M1"
+                    }
+                }
+            ]
+        }
+    }
+}
