@@ -29,8 +29,9 @@ const (
 	URIInternal   = "/api/internal/v1/reporting"
 	URIManagement = "/api/management/v1/reporting"
 
-	URILiveliness      = "/health/alive"
-	URIInventorySearch = "inventory/search"
+	URILiveliness              = "/health/alive"
+	URIInventorySearch         = "inventory/search"
+	URIInventorySearchInternal = "inventory/tenants/:tenant_id/search"
 )
 
 // NewRouter returns the gin router
@@ -45,9 +46,10 @@ func NewRouter(reporting reporting.App) *gin.Engine {
 	router.Use(routerLogger(l))
 	router.Use(gin.Recovery())
 
-	internal := NewInternalController()
+	internal := NewInternalController(reporting)
 	internalAPI := router.Group(URIInternal)
 	internalAPI.GET(URILiveliness, internal.HealthAlive)
+	internalAPI.POST(URIInventorySearchInternal, internal.Search)
 
 	mgmt := NewManagementController(reporting)
 	mgmtAPI := router.Group(URIManagement)
