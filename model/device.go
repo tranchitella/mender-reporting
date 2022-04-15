@@ -139,9 +139,9 @@ func (a *Device) SetUpdatedAt(val time.Time) *Device {
 type DeviceInventory []*InventoryAttribute
 
 type InventoryAttribute struct {
-	Name    *string  `json:"name,omitempty"`
-	String  []string `json:"string,omitempty"`
-	Numeric *float64 `json:"numeric,omitempty"`
+	Name    *string   `json:"name,omitempty"`
+	String  []string  `json:"string,omitempty"`
+	Numeric []float64 `json:"numeric,omitempty"`
 }
 
 func NewInventoryAttribute() *InventoryAttribute {
@@ -182,15 +182,24 @@ func (a *InventoryAttribute) SetStrings(val []string) *InventoryAttribute {
 }
 
 func (a *InventoryAttribute) GetNumeric() float64 {
-	if a.Numeric != nil {
-		return *a.Numeric
+	if len(a.Numeric) > 0 {
+		return a.Numeric[0]
 	}
 	return float64(0)
 }
 
 func (a *InventoryAttribute) SetNumeric(val float64) *InventoryAttribute {
-	a.Numeric = &val
+	a.Numeric = []float64{val}
 	return a
+}
+
+func (a *InventoryAttribute) SetNumerics(val []float64) *InventoryAttribute {
+	a.Numeric = val
+	return a
+}
+
+func (a *InventoryAttribute) GetNumerics() []float64 {
+	return a.Numeric
 }
 
 func randomMacAddress() string {

@@ -15,8 +15,10 @@
 package elasticsearch
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
+	"log"
 	"strings"
 
 	es "github.com/elastic/go-elasticsearch/v7"
@@ -115,6 +117,7 @@ type Client interface {
 	IndexDevice(ctx context.Context, device *model.Device) error
 	BulkIndexDevices(ctx context.Context, devices []*model.Device) error
 	Migrate(ctx context.Context) error
+	Search(ctx context.Context, query map[string]interface{}) (map[string]interface{}, error)
 }
 
 type ElasticsearchClient struct {
@@ -210,7 +213,7 @@ func (e *ElasticsearchClient) BulkIndexDevices(ctx context.Context, devices []*m
 
 func (e *ElasticsearchClient) Migrate(ctx context.Context) error {
 	req := esapi.IndicesPutIndexTemplateRequest{
-		Name: indexDevices,
+		Name: indexDevices + "-tenant1",
 		Body: strings.NewReader(indexDevicesTemplate),
 	}
 
@@ -225,4 +228,45 @@ func (e *ElasticsearchClient) Migrate(ctx context.Context) error {
 	}
 
 	return nil
+}
+
+func (e *ElasticsearchClient) Search(ctx context.Context, query map[string]interface{}) (map[string]interface{}, error) {
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(query); err != nil {
+		return nil, err
+	}
+
+	tenant, ok := ctx.Value("tenant").(string)
+	if tenant == "" {
+		panic("no tenant")
+	}
+	if !ok {
+		panic("ctx")
+	}
+
+	resp, err := e.client.Search(
+		e.client.Search.WithContext(ctx),
+		e.client.Search.WithIndex("devices-"+tenant),
+		e.client.Search.WithBody(&buf),
+		e.client.Search.WithTrackTotalHits(true),
+		//es.Search.WithPretty(),
+	)
+	defer resp.Body.Close()
+
+	if err != nil {
+		return nil, err
+	}
+
+	if resp.IsError() {
+		return nil, errors.New(resp.String())
+	}
+
+	var ret map[string]interface{}
+	if err := json.NewDecoder(resp.Body).Decode(&ret); err != nil {
+		return nil, err
+	}
+
+	log.Printf("elasticsearch raw:\n%v", ret)
+
+	return ret, nil
 }

@@ -1,0 +1,19 @@
+{
+    "query": {
+        "bool":{
+            "should": [
+                {
+                    "exists": {
+                        "field": "custom_tag_str"    
+                    }
+                },
+                    {
+                    "exists": {
+                        "field": "custom_tag_num"    
+                    }
+                }
+            ],
+            "minimum_should_match": 1
+        }
+    }
+}

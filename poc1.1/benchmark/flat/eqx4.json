@@ -1,0 +1,28 @@
+{
+    "query": {
+        "bool": {
+            "must": [
+                {
+                    "match": {
+                        "inventory_hostname": "Ambarella"
+                    }
+                },
+                {
+                    "match": {
+                        "inventory_artifact_name": "system-M1"
+                    }
+                },
+                {
+                    "match": {
+                        "inventory_device_type": "dm1"
+                    }
+                },
+                {
+                    "match": {
+                        "inventory_rootfs_type": "ext4"
+                    }
+                }
+            ]
+        }
+    }
+}

@@ -28,6 +28,7 @@ import (
 	"github.com/mendersoftware/go-lib-micro/log"
 
 	api "github.com/mendersoftware/reporting/api/http"
+	"github.com/mendersoftware/reporting/app/reporting"
 	"github.com/mendersoftware/reporting/client/elasticsearch"
 	dconfig "github.com/mendersoftware/reporting/config"
 )
@@ -48,7 +49,10 @@ func InitAndRun(conf config.Reader, esClient elasticsearch.Client) error {
 	l := log.FromContext(ctx)
 
 	var listen = conf.GetString(dconfig.SettingListen)
-	var router = api.NewRouter()
+
+	reporting := reporting.NewApp(esClient)
+
+	var router = api.NewRouter(reporting)
 	srv := &http.Server{
 		Addr:    listen,
 		Handler: router,
